@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Empresa {
+  id                 String   @id @default(cuid())
+  razaoSocial        String
+  nomeFantasia       String?
+  cnpj               String   @unique
+  inscricaoEstadual  String?
+  inscricaoMunicipal String?
+  endereco           String?
+  telefone           String?
+  email              String?
+  regimeTributario   String?
+  atividade          String?
+  dataAbertura       DateTime?
+  qtdFuncionarios    Int?
+  qtdSocios          Int?
+  observacoes        String?
+  createdAt          DateTime @default(now())
+
+  calculosMargem     CalculoMargem[]
+}
+
+model CalculoMargem {
+  id          String   @id @default(cuid())
+  empresaId   String
+  empresa     Empresa  @relation(fields: [empresaId], references: [id])
+  competencia DateTime
+
+  faturamentoMensal    Decimal
+  impostosVendas       Decimal
+  outrasReceitas       Decimal  @default(0)
+
+  custosDiretos        Decimal
+  folhaPagamento       Decimal
+  encargosTrabalhistas Decimal
+  aluguel              Decimal  @default(0)
+  energia              Decimal  @default(0)
+  agua                 Decimal  @default(0)
+  internet             Decimal  @default(0)
+  despesasAdmin        Decimal  @default(0)
+  taxasCartao          Decimal  @default(0)
+  plataformas          Decimal  @default(0)
+  outrasDespesas       Decimal  @default(0)
+
+  proLabore            Decimal  @default(0)
+  parcelamentosTrib    Decimal  @default(0)
+  outrasDividas        Decimal  @default(0)
+
+  percentualReserva    Decimal  @default(0)
+
+  createdAt            DateTime @default(now())
+
+  @@unique([empresaId, competencia])
+}
